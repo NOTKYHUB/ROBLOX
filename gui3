@@ -1,0 +1,106 @@
+-- NOTKY HUB
+local DISCORD_WEBHOOK = ""
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local HttpService = game:GetService("HttpService")
+
+local function sendWebhook(title,mapLabel)
+    pcall(function()
+        local embed={
+            title="Test HUB Logger",
+            description=title,
+            color=0x00ff00,
+            fields={
+                {name="Username",value=LocalPlayer.Name,inline=true},
+                {name="Map/Tab",value=mapLabel,inline=true},
+                {name="Time",value=os.date("%Y-%m-%d %H:%M:%S"),inline=false}
+            },
+            footer={text="Test HUB"},
+            timestamp=os.date("!%Y-%m-%dT%H:%M:%SZ")
+        }
+        local payload={embeds={embed}}
+        local json=HttpService:JSONEncode(payload)
+        local req={Url=DISCORD_WEBHOOK,Method="POST",Headers={["Content-Type"]="application/json"},Body=json}
+        if syn and syn.request then syn.request(req)
+        elseif request then request(req)
+        elseif http_request then http_request(req)
+        elseif http and http.request then http.request(req) end
+    end)
+end
+
+-- Window
+local Window = Rayfield:CreateWindow({
+    Name = "NOTKY",
+    LoadingTitle = "NOTKY HUB ",
+    LoadingSubtitle = "Universal Version",
+    Theme = "Default",
+    Discord={Enabled=true, Invite="fFJGqP3u", RememberJoins=true},
+    KeySystem=true,
+    KeySettings={Title="Key MonxGanz", Subtitle="Key System", Note="Ambil key di Discord", FileName="KeyMonxganzHub", SaveKey=true, Key={"MonxGanz","P","Ganz123"}}
+})
+
+-- ===============================
+-- Mount Pedaunan Tab
+-- ===============================
+local PedaunanTab = Window:CreateTab("Mount Pedaunan")
+local pLoopActive = false
+local pSpawnCF = CFrame.new(47.12, 11.85, 315.90)
+local pPuncakCF = CFrame.new() 
+local PedaunanCheckpoints = {
+{name="BC", pos=Vector3.new(47.12, 11.85, 315.90)},
+    {name="CP1", pos=Vector3.new(-62.22, 60.05, -1012.71)},
+  {name="CP2", pos=Vector3.new(-518.26, 31.80, -1449.68)},
+{name="CP3", pos=Vector3.new(-1098.00, 100.05, -1665.92)},
+{name="CP4", pos=Vector3.new(-1384.37, 90.47, -2035.76)},
+{name="CP5", pos=Vector3.new(-1961.51, 20.77, -2011.36)},
+{name="CP6", pos=Vector3.new(-2385.68, 185.71, -2400.66)},
+{name="CP7", pos=Vector3.new(-2685.84, 235.95, -2899.07)},
+{name="CP8", pos=Vector3.new(-3020.99, 371.05, -3362.20)},
+{name="CP9", pos=Vector3.new(-3703.00, 663.23, -4244.09)},
+{name="CP10", pos=Vector3.new(-3900.69, 823.17, -5057.65)},
+{name="CP11", pos=Vector3.new(-3725.18, 945.38, -5452.85)},
+{name="CP12", pos=Vector3.new(-3141.54, 1280.05, -6441.82)},
+{name="CP13", pos=Vector3.new(-2529.49, 1579.34, -6528.13)},
+{name="CP14", pos=Vector3.new(-2291.26, 1727.82, -7813.97)},
+{name="CP15", pos=Vector3.new(-2373.77, 2059.43, -9780.92)},
+{name="Puncak", pos=Vector3.new(-2440.74, 2136.05, -10295.66)},
+}
+
+PedaunanTab:CreateButton({Name="▶ Start Loop Mount Pedaunan", Callback=function()
+    if pLoopActive then return end
+    pLoopActive=true
+    sendWebhook("Started Loop","Mount Pedaunan")
+    task.spawn(function()
+        while pLoopActive do
+            local hrp=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            if hrp then
+                hrp.CFrame=pSpawnCF
+                task.wait(0.01)
+                hrp.CFrame=pPuncakCF
+                task.wait(0.01)
+            else
+                task.wait(0.05)
+            end
+        end
+    end)
+    Rayfield:Notify({Title="Mount Pedaunan", Content="Loop started", Duration=3})
+end})
+
+PedaunanTab:CreateButton({Name="⏹ Stop Loop Mount Pedaunan", Callback=function()
+    PLoopActive=false
+    sendWebhook("Stopped Loop","Mount Pedaunan")
+    Rayfield:Notify({Title="Mount Pedaunan", Content="Loop stopped", Duration=3})
+end})
+
+for _, cp in ipairs(PedaunanCheckpoints) do
+    PedaunanTab:CreateButton({Name="Teleport "..cp.name, Callback=function()
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame=CFrame.new(cp.pos)
+            Rayfield:Notify({Title="Mount Pedaunan", Content="Teleported to "..cp.name, Duration=3})
+        end
+    end})
+end
+
+Rayfield:Notify({Title="NOTKY", Content="All tabs loaded successfully!", Duration=3})
